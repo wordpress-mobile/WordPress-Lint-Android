@@ -28,5 +28,7 @@ $ ./gradlew assemble test bintrayUpload -PbintrayUser=FIXME -PbintrayKey=FIXME -
 
 ## License ##
 
-WordPress-Login-Flow-Android is an Open Source project covered by the
+WordPress-Lint-Android is an Open Source project covered by the
 [GNU General Public License version 2](LICENSE.md).
+
+[1]: https://github.com/wordpress-mobile/WordPress-Lint-Android/blob/develop/WordPressLint/build.gradle#L15
