@@ -2,6 +2,7 @@ package org.wordpress.android.lint;
 
 
 import com.android.tools.lint.client.api.IssueRegistry;
+import com.android.tools.lint.detector.api.ApiKt;
 import com.android.tools.lint.detector.api.Issue;
 
 import java.util.Arrays;
@@ -15,5 +16,10 @@ public class WordPressIssueRegistry extends IssueRegistry {
                 WordPressRtlCodeDetector.SET_PADDING,
                 WordPressRtlCodeDetector.SET_MARGIN,
                 WordPressRtlCodeDetector.GET_PADDING);
+    }
+
+    @Override
+    public int getApi() {
+        return ApiKt.CURRENT_API;
     }
 }
