@@ -23,7 +23,8 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
                                 WordPressAndroidImportInViewModelDetector::class.java,
                                 EnumSet.of(Scope.JAVA_FILE)))
 
-        private val ALLOWED_ANDROID_IMPORTS = listOf("android.R.", "androidx.lifecycle.ViewModel")
+        private val ALLOWED_ANDROID_IMPORTS = listOf("android.R.", "androidx.lifecycle.ViewModel",
+                "androidx.lifecycle", "android.text.TextUtils")
         private val DISALLOWED_ANDROID_IMPORTS = listOf("android.", "androidx.")
     }
 
