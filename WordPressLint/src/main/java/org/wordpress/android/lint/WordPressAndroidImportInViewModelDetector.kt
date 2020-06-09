@@ -11,7 +11,7 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
         val ISSUE_ANDROID_IMPORT_IN_VIEWMODEL =
                 Issue.create(
                         id = "AndroidImportsInViewModel",
-                        briefDescription = "Disallows Android APIs from being used inside the ViewModel class.",
+                        briefDescription = "Disallows Android imports from being used inside the ViewModel class.",
                         explanation = "ViewModels shouldn't know anything about the Android framework classes" +
                                 ". This improves testability & modularity.",
                         category = Category.CORRECTNESS,
@@ -26,6 +26,8 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
     }
 
     override fun getApplicableUastTypes() = listOf(UImportStatement::class.java)
+
+    // only ViewModels are processed by this detector
     override fun applicableSuperClasses() = listOf("androidx.lifecycle.ViewModel")
 
     override fun createUastHandler(context: JavaContext): UElementHandler? {
@@ -34,6 +36,7 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
                 node.importReference?.let { import ->
                     val importedClass = import.asRenderString()
 
+                    // The detector ignores the Android imports that are allowed.
                     val isImportAllowed = ALLOWED_ANDROID_IMPORTS.map { allowedImport ->
                         importedClass.startsWith(allowedImport)
                     }.any { importAllowed -> importAllowed }
@@ -45,6 +48,7 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
                         importedClass.startsWith(disallowedImport)
                     }.any { importDisallowed -> importDisallowed }
 
+                    // The detector reports imports that violate the no Android import rule.
                     if (isImportDisallowed) {
                         context.report(
                                 ISSUE_ANDROID_IMPORT_IN_VIEWMODEL, node,
