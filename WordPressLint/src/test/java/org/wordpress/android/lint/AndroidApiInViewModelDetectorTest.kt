@@ -26,7 +26,37 @@ class AndroidApiInViewModelDetectorTest {
                 .expectClean()
     }
 
-    fun lint() = TestLintTask().sdkHome(SDK_PATH)
+    @Test
+    fun `ViewModel class should not trigger the lint check`() {
+        lint().files(
+                LintDetectorTest.kotlin(
+                        """
+            package androidx.lifecycle
+
+            class ViewModel
+        """
+                ).indented())
+                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .run()
+                .expectClean()
+    }
+
+    @Test
+    fun `A normal class shouldn't trigger the check`() {
+        lint().files(
+                LintDetectorTest.kotlin(
+                        """
+            package test
+
+            class TestClass
+        """
+                ).indented())
+                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .run()
+                .expectClean()
+    }
+
+    fun lint() = TestLintTask().sdkHome(SDK_PATH).detector(AndroidApiInViewModelDetector())
 
 
     companion object {
