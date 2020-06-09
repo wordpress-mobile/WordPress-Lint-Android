@@ -15,10 +15,29 @@ class AndroidApiInViewModelDetectorTest {
             package test
             import android.widget.TextView
             import androidx.lifecycle.ViewModel
+            import org.wordpress.android.fluxc.store.SiteStore
 
             class TestViewModel : ViewModel() {
               lateinit var textView: TextView
              }
+        """
+                ).indented())
+                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .run()
+                .expectErrorCount(1)
+    }
+
+    @Test
+    fun `when ViewModel contains allowed Android R import then test should pass`() {
+        lint().files(
+                LintDetectorTest.kotlin(
+                        """
+            package test
+            import org.wordpress.android.fluxc.store.SiteStore
+            import android.R.color.black
+            import androidx.lifecycle.ViewModel
+
+            class TestViewModel : ViewModel()
         """
                 ).indented())
                 .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
