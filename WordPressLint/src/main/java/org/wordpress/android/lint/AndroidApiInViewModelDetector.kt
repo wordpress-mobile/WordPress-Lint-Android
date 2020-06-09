@@ -2,6 +2,7 @@ package org.wordpress.android.lint
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
+import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UImportStatement
 import java.util.*
 
@@ -35,6 +36,8 @@ class AndroidApiInViewModelDetector: Detector(), Detector.UastScanner {
             }
         }
     }
+
+    override fun applicableSuperClasses() = listOf("androidx.lifecycle.ViewModel")
 }
 
 
