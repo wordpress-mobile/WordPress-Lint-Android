@@ -1,10 +1,9 @@
 package org.wordpress.android.lint
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
-import com.android.tools.lint.checks.infrastructure.TestLintTask
+import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
 import org.wordpress.android.lint.AndroidApiInViewModelDetector.Companion.ISSUE_ANDROID_API_IN_VIEWMODEL
-import java.io.File
 
 class AndroidApiInViewModelDetectorTest {
     @Test
@@ -73,12 +72,5 @@ class AndroidApiInViewModelDetectorTest {
                 .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
                 .run()
                 .expectClean()
-    }
-
-    fun lint() = TestLintTask().sdkHome(SDK_PATH).detector(AndroidApiInViewModelDetector())
-
-
-    companion object {
-        private val SDK_PATH = File("/Users/joeldean/Library/Android/sdk")
     }
 }
