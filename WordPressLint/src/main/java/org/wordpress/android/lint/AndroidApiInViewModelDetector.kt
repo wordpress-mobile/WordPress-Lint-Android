@@ -56,8 +56,3 @@ class AndroidApiInViewModelDetector : Detector(), Detector.UastScanner {
         }
     }
 }
-
-
-
-
-
