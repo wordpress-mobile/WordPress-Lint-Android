@@ -16,7 +16,7 @@ public class WordPressIssueRegistry extends IssueRegistry {
                 WordPressRtlCodeDetector.SET_PADDING,
                 WordPressRtlCodeDetector.SET_MARGIN,
                 WordPressRtlCodeDetector.GET_PADDING,
-                AndroidApiInViewModelDetector.getISSUE_ANDROID_API_IN_VIEWMODEL());
+                WordPressAndroidImportInViewModelDetector.getISSUE_ANDROID_IMPORT_IN_VIEWMODEL());
     }
 
     @Override

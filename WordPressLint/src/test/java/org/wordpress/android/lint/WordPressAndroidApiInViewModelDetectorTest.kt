@@ -3,9 +3,9 @@ package org.wordpress.android.lint
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
-import org.wordpress.android.lint.AndroidApiInViewModelDetector.Companion.ISSUE_ANDROID_API_IN_VIEWMODEL
+import org.wordpress.android.lint.WordPressAndroidImportInViewModelDetector.Companion.ISSUE_ANDROID_IMPORT_IN_VIEWMODEL
 
-class AndroidApiInViewModelDetectorTest {
+class WordPressAndroidApiInViewModelDetectorTest {
     @Test
     fun `when ViewModel contains Android import then test should fail`() {
         lint().files(
@@ -21,7 +21,7 @@ class AndroidApiInViewModelDetectorTest {
              }
         """
                 ).indented())
-                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectErrorCount(1)
     }
@@ -39,7 +39,7 @@ class AndroidApiInViewModelDetectorTest {
             class TestViewModel : ViewModel()
         """
                 ).indented())
-                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectClean()
     }
@@ -54,7 +54,7 @@ class AndroidApiInViewModelDetectorTest {
             class ViewModel
         """
                 ).indented())
-                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectClean()
     }
@@ -69,7 +69,7 @@ class AndroidApiInViewModelDetectorTest {
             class TestClass
         """
                 ).indented())
-                .issues(ISSUE_ANDROID_API_IN_VIEWMODEL)
+                .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectClean()
     }

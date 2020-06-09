@@ -5,10 +5,10 @@ import com.android.tools.lint.detector.api.*
 import org.jetbrains.uast.UImportStatement
 import java.util.*
 
-class AndroidApiInViewModelDetector : Detector(), Detector.UastScanner {
+class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScanner {
     companion object {
         @JvmStatic
-        val ISSUE_ANDROID_API_IN_VIEWMODEL =
+        val ISSUE_ANDROID_IMPORT_IN_VIEWMODEL =
                 Issue.create(
                         id = "AndroidImportsInViewModel",
                         briefDescription = "Disallows Android APIs from being used inside the ViewModel class.",
@@ -18,7 +18,7 @@ class AndroidApiInViewModelDetector : Detector(), Detector.UastScanner {
                         priority = 5,
                         severity = Severity.ERROR,
                         implementation = Implementation(
-                                AndroidApiInViewModelDetector::class.java,
+                                WordPressAndroidImportInViewModelDetector::class.java,
                                 EnumSet.of(Scope.JAVA_FILE)))
 
         private val ALLOWED_ANDROID_IMPORTS = listOf("android.R.", "androidx.lifecycle.ViewModel")
@@ -47,9 +47,9 @@ class AndroidApiInViewModelDetector : Detector(), Detector.UastScanner {
 
                     if (isImportDisallowed) {
                         context.report(
-                                ISSUE_ANDROID_API_IN_VIEWMODEL, node,
+                                ISSUE_ANDROID_IMPORT_IN_VIEWMODEL, node,
                                 context.getLocation(import),
-                                ISSUE_ANDROID_API_IN_VIEWMODEL.getExplanation(TextFormat.TEXT))
+                                ISSUE_ANDROID_IMPORT_IN_VIEWMODEL.getExplanation(TextFormat.TEXT))
                     }
                 }
             }
