@@ -11,8 +11,10 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
         val ISSUE_ANDROID_IMPORT_IN_VIEWMODEL =
                 Issue.create(
                         id = "AndroidImportsInViewModel",
-                        briefDescription = "Disallows Android imports from being used inside the ViewModel class.",
-                        explanation = "ViewModels shouldn't know anything about the Android framework classes" +
+                        briefDescription = "Disallows Android imports from being used inside the " +
+                                "ViewModel class.",
+                        explanation = "ViewModels shouldn't know anything about the Android " +
+                                "framework classes" +
                                 ". This improves testability & modularity.",
                         category = Category.CORRECTNESS,
                         priority = 5,
