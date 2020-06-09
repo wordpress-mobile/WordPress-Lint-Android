@@ -29,7 +29,7 @@ class WordPressAndroidApiInViewModelDetectorTest {
     }
 
     @Test
-    fun `when ViewModel contains allowed Android R import then test should pass`() {
+    fun `when ViewModel contains ALLOWED_ANDROID_IMPORTS then test should pass`() {
         lint().files(kotlin("""
             package test
             import org.wordpress.android.fluxc.store.SiteStore
