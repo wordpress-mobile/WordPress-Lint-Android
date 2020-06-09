@@ -13,6 +13,7 @@ apply plugin: 'java-library'
 apply plugin: 'com.novoda.bintray-release'
 
 version = "1.0.1"
+def lint_version = "26.3.2"
 
 repositories {
     google()
@@ -20,11 +21,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.android.tools.lint:lint-api:26.1.1"
-    compileOnly "com.android.tools.lint:lint-checks:26.1.1"
-    testCompile "com.android.tools.lint:lint:26.1.1"
-    testCompile "com.android.tools.lint:lint-tests:26.1.1"
-    testCompile "com.android.tools:testutils:26.1.1"
+    compileOnly "com.android.tools.lint:lint-api:$lint_version"
+    compileOnly "com.android.tools.lint:lint-checks:$lint_version"
+    testImplementation "com.android.tools.lint:lint:$lint_version"
+    testImplementation "com.android.tools.lint:lint-tests:$lint_version"
+    testImplementation "com.android.tools:testutils:$lint_version"
 }
 
 jar {
