@@ -40,16 +40,16 @@ class WordPressAndroidImportInViewModelDetector : Detector(), Detector.UastScann
                     val importedClass = import.asRenderString()
 
                     // The detector ignores the Android imports that are allowed.
-                    val isImportAllowed = ALLOWED_ANDROID_IMPORTS.map { allowedImport ->
+                    val isImportAllowed = ALLOWED_ANDROID_IMPORTS.any { allowedImport ->
                         importedClass.startsWith(allowedImport)
-                    }.any { importAllowed -> importAllowed }
+                    }
 
                     if (isImportAllowed)
                         return@let
 
-                    val isImportDisallowed = DISALLOWED_ANDROID_IMPORTS.map { disallowedImport ->
+                    val isImportDisallowed = DISALLOWED_ANDROID_IMPORTS.any { disallowedImport ->
                         importedClass.startsWith(disallowedImport)
-                    }.any { importDisallowed -> importDisallowed }
+                    }
 
                     // The detector reports imports that violate the no Android import rule.
                     if (isImportDisallowed) {
