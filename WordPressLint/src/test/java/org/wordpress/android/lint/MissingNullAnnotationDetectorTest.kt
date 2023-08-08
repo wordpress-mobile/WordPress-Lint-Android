@@ -29,7 +29,7 @@ class MissingNullAnnotationDetectorTest {
 
     }
     @Test
-    fun `it ignores injections`() {
+    fun `it ignores injected fields`() {
         lint().files(LintDetectorTest.java("""
             package test;
 
@@ -39,6 +39,70 @@ class MissingNullAnnotationDetectorTest {
         """).indented())
                 .allowCompilationErrors()
                 .issues(MissingNullAnnotationDetector.MISSING_FIELD_ANNOTATION)
+                .run()
+                .expectClean()
+    }
+
+    @Test
+    fun `it should inform when null annotation is missing on a method return type`() {
+        lint().files(LintDetectorTest.java("""
+            package test;
+
+            class ExampleClass {
+              String getMessage() {
+                return "example";
+              }
+            }
+        """).indented())
+                .allowCompilationErrors()
+                .issues(MissingNullAnnotationDetector.MISSING_METHOD_RETURN_TYPE_ANNOTATION)
+                .run()
+                .expect("""
+                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodReturnType]
+                      String getMessage() {
+                             ~~~~~~~~~~
+                    0 errors, 0 warnings
+                            """
+                        .trimIndent()
+                )
+    }
+
+    @Test
+    fun `it should inform when null annotation is missing on a method parameter`() {
+        lint().files(LintDetectorTest.java("""
+            package test;
+
+            class ExampleClass {
+              String getMessage(String name) {
+                return name + " example";
+              }
+            }
+        """).indented())
+                .allowCompilationErrors()
+                .issues(MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION)
+                .run()
+                .expect("""
+                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodParameter]
+                      String getMessage(String name) {
+                                        ~~~~~~~~~~~
+                    0 errors, 0 warnings
+                            """
+                        .trimIndent()
+                )
+    }
+    @Test
+    fun `it ignores injected parameters`() {
+        lint().files(LintDetectorTest.java("""
+            package test;
+
+            class ExampleClass {
+              String getMessage(@Inject String name) {
+                return name + " example";
+              }
+            }
+        """).indented())
+                .allowCompilationErrors()
+                .issues(MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION)
                 .run()
                 .expectClean()
     }

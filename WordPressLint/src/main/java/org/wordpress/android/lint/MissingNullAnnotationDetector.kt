@@ -13,110 +13,145 @@ import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isJava
 import com.intellij.psi.PsiPrimitiveType
 import org.jetbrains.uast.UAnnotated
+import org.jetbrains.uast.UAnnotationMethod
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UEnumConstant
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UVariable
 
 class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
     override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(
             UField::class.java,
-//            UMethod::class.java,
+            UMethod::class.java,
     )
 
-    override fun createUastHandler(context: JavaContext): UElementHandler? =
-            if (isJava(context.uastFile?.sourcePsi))
-                object: UElementHandler() {
-                    override fun visitField(node: UField) {
-                        if (!node.isAutoSuppressed && !node.isNullAnnotated) {
-                            context.report(
-                                    MISSING_FIELD_ANNOTATION,
-                                    node,
-                                    context.getLocation(node),
-                                    "Missing null annotation",
-                                    node.fixes,
-                            )
-                        }
+    override fun createUastHandler(context: JavaContext): UElementHandler? = with(context) {
+        if (!isJava(uastFile?.sourcePsi)) {
+            return null
+        }
+        object: UElementHandler() {
+            override fun visitField(node: UField) {
+                if (node.requiresNullAnnotation && !node.isNullAnnotated) {
+                    report(node, MISSING_FIELD_ANNOTATION)
+                }
+            }
+
+            override fun visitMethod(node: UMethod) {
+                if (node.requiresNullAnnotation && !node.isNullAnnotated) {
+                    report(node, MISSING_METHOD_RETURN_TYPE_ANNOTATION)
+                }
+
+                node.uastParameters.forEach { parameter ->
+                    if (parameter.requiresNullAnnotation && !parameter.isNullAnnotated) {
+                        report(parameter, MISSING_METHOD_PARAMETER_ANNOTATION)
                     }
                 }
-            else
-                null
-
+            }
+        }
+    }
     companion object {
         val MISSING_FIELD_ANNOTATION = Issue.create(
                 id = "MissingNullAnnotationOnField",
                 briefDescription = "Nullable/NonNull annotation missing on field",
                 explanation = "Checks for missing `@NonNull/@Nullable` annotations for fields.",
-                category = CORRECTNESS,
-                priority = 5,
-                severity = Severity.INFORMATIONAL,
-                implementation = Implementation(
-                        MissingNullAnnotationDetector::class.java,
-                        JAVA_FILE_SCOPE,
-                )
+        )
+        val MISSING_METHOD_RETURN_TYPE_ANNOTATION = Issue.create(
+                id = "MissingNullAnnotationOnMethodReturnType",
+                briefDescription = "Nullable/NonNull annotation missing on method return type",
+                explanation = "Checks for missing `@NonNull/@Nullable` annotations on method return types.",
+        )
+        val MISSING_METHOD_PARAMETER_ANNOTATION = Issue.create(
+                id = "MissingNullAnnotationOnMethodParameter",
+                briefDescription = "Nullable/NonNull annotation missing on method parameter",
+                explanation = "Checks for missing `@NonNull/@Nullable` annotations on method parameters.",
         )
 
         @Suppress("ForbiddenComment")
         // TODO: Create a LintFix to normalize our usage to Android's annotations. This can be
         // useful for running Nullability analysis. See:
         // https://developer.android.com/studio/write/annotations#nullability-analysis
-        private val acceptableNullAnnotations = listOf(
+        val acceptableNullAnnotations = listOf(
                 "androidx.annotation.NonNull",
                 "androidx.annotation.Nullable",
         )
-
-        private val UField.isPrimitive get() = this.type is PsiPrimitiveType
-        private val UField.isEnum get() = this is UEnumConstant
-        private val UField.isConstant get() = this.isStatic && this.isFinal
-        private val UField.isInitializedFinalField get() = this.isFinal && this.uastInitializer != null
-
-        /** We ignore missing null annotations for cases where this evaluates to true. */
-        private val UField.isAutoSuppressed get() =
-            this.isPrimitive
-                    || this.isEnum
-                    || this.isConstant
-                    || this.isInitializedFinalField
-                    || this.annotations.any { annotation ->
-                annotation.qualifiedName?.endsWith("Inject") ?: false
-            }
-
-
-        private val UAnnotated.isNullAnnotated get() = this.uAnnotations.any { annotation ->
-            acceptableNullAnnotations.any { nullAnnotation ->
-                annotation.qualifiedName == nullAnnotation
-            }
-        }
-
-        private val UElement.fixes get() = this.asSourceString().let { sourceString ->
-            val nullableReplacement = "@Nullable $sourceString"
-            val nonNullReplacement = "@NonNull $sourceString"
-
-            LintFix.create().group()
-                    .add(
-                            LintFix.create()
-                                    .name("Annotate as @Nullable")
-                                    .replace()
-                                    .text(sourceString)
-                                    .shortenNames()
-                                    .reformat(true)
-                                    .with(nullableReplacement)
-                                    .build()
-                    )
-                    .add(
-                            LintFix.create()
-                                    .name("Annotate as @NonNull")
-                                    .replace()
-                                    .text(sourceString)
-                                    .shortenNames()
-                                    .reformat(true)
-                                    .with(nonNullReplacement)
-                                    .build()
-                    )
-                    .build()
-        }
     }
 }
 
+private val UVariable.isPrimitive get() = this.type is PsiPrimitiveType
+private val UVariable.isEnum get() = this is UEnumConstant
+private val UVariable.isInjected get() = this.annotations.any { annotation ->
+    annotation.qualifiedName?.endsWith("Inject") ?: false
+}
+private val UVariable.isConstant get() = this.isStatic && this.isFinal
+private val UVariable.isInitializedFinalField get() = this.isFinal
+        && this.uastInitializer != null
+private val UVariable.requiresNullAnnotation get() =
+    !this.isPrimitive
+            && !this.isEnum
+            && !this.isConstant
+            && !this.isInitializedFinalField
+            && !this.isInjected
+private val UMethod.isPrimitive get() = this.returnType is PsiPrimitiveType
+private val UMethod.requiresNullAnnotation get() =
+    this !is UAnnotationMethod
+            && !this.isPrimitive
+            && !this.isConstructor
 
+private val UAnnotated.isNullAnnotated get() = this.uAnnotations.any { annotation ->
+    MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
+        annotation.qualifiedName == nullAnnotation
+    }
+}
 
+private fun Issue.Companion.create(
+        id: String,
+        briefDescription: String,
+        explanation: String,
+) = create(
+        id = id,
+        briefDescription = briefDescription,
+        explanation = explanation,
+        category = CORRECTNESS,
+        priority = 5,
+        severity = Severity.INFORMATIONAL,
+        implementation = Implementation(
+                MissingNullAnnotationDetector::class.java,
+                JAVA_FILE_SCOPE,
+        )
+)
 
+private fun JavaContext.report(node: UElement, issue: Issue) = report(
+        issue,
+        node,
+        getLocation(node),
+        "Missing null annotation",
+        node.fixes,
+)
+private val UElement.fixes get() = this.asSourceString().let { sourceString ->
+    val nullableReplacement = "@Nullable $sourceString"
+    val nonNullReplacement = "@NonNull $sourceString"
+
+    LintFix.create().group()
+            .add(
+                    LintFix.create()
+                            .name("Annotate as @Nullable")
+                            .replace()
+                            .text(sourceString)
+                            .shortenNames()
+                            .reformat(true)
+                            .with(nullableReplacement)
+                            .build()
+            )
+            .add(
+                    LintFix.create()
+                            .name("Annotate as @NonNull")
+                            .replace()
+                            .text(sourceString)
+                            .shortenNames()
+                            .reformat(true)
+                            .with(nonNullReplacement)
+                            .build()
+            )
+            .build()
+}
