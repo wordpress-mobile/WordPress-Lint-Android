@@ -1,0 +1,33 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.8.20'
+        gradlePluginVersion = '8.0.2'
+        lintVersion = '31.0.2'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradlePluginVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+
+}
+
+plugins {
+    id 'maven-publish'
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.buildDir
+}
