@@ -29,37 +29,11 @@ targetCompatibility = "17"
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = 'lint'
-//            userOrg = 'wordpress-mobile'
-            groupId = 'org.wordpress'
-//            uploadName = 'lint'
-//            desc = 'Lint module for WordPress-Android'
-//            publishVersion = project.version
-            version = project.version
-//            licences = ['GPL-2.0']
-//            website = 'https://github.com/wordpress-mobile/WordPress-Lint-Android'
-//            dryRun = 'false'
-//            autoPublish = 'true'
-
             from components.java
+
+            artifactId = 'lint'
+            groupId = 'org.wordpress'
+            version = project.version
         }
     }
 }
-//jar {
-//    manifest {
-//        attributes("Lint-Registry-v2": "org.wordpress.android.lint.WordPressIssueRegistry")
-//    }
-//}
-
-//publish {
-//    artifactId = 'lint'
-//    userOrg = 'wordpress-mobile'
-//    groupId = 'org.wordpress'
-//    uploadName = 'lint'
-//    desc = 'Lint module for WordPress-Android'
-//    publishVersion = project.version
-//    licences = ['GPL-2.0']
-//    website = 'https://github.com/wordpress-mobile/WordPress-Lint-Android'
-//    dryRun = 'false'
-//    autoPublish = 'true'
-//}
