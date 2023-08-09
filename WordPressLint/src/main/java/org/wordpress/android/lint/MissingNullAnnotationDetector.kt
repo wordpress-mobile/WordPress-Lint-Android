@@ -78,6 +78,7 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
     }
 }
 
+/* UVariable Extensions */
 private val UVariable.isPrimitive get() = this.type is PsiPrimitiveType
 private val UVariable.isEnum get() = this is UEnumConstant
 private val UVariable.isInjected get() = this.annotations.any { annotation ->
@@ -92,18 +93,22 @@ private val UVariable.requiresNullAnnotation get() =
             && !this.isConstant
             && !this.isInitializedFinalField
             && !this.isInjected
+
+/* UMethod Extensions */
 private val UMethod.isPrimitive get() = this.returnType is PsiPrimitiveType
 private val UMethod.requiresNullAnnotation get() =
     this !is UAnnotationMethod
             && !this.isPrimitive
             && !this.isConstructor
 
+/* UAnnotated Extensions */
 private val UAnnotated.isNullAnnotated get() = this.uAnnotations.any { annotation ->
     MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
         annotation.qualifiedName == nullAnnotation
     }
 }
 
+/* Issue.Companion Extensions */
 private fun Issue.Companion.create(
         id: String,
         briefDescription: String,
@@ -121,6 +126,7 @@ private fun Issue.Companion.create(
         )
 )
 
+/* JavaContext Extensions */
 private fun JavaContext.report(node: UElement, issue: Issue) = report(
         issue,
         node,
@@ -128,6 +134,8 @@ private fun JavaContext.report(node: UElement, issue: Issue) = report(
         "Missing null annotation",
         node.fixes,
 )
+
+/* UElement Extensions */
 private val UElement.fixes get() = this.asSourceString().let { sourceString ->
     val nullableReplacement = "@Nullable $sourceString"
     val nonNullReplacement = "@NonNull $sourceString"
