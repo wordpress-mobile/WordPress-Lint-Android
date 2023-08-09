@@ -21,7 +21,7 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UVariable
 
-class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
+class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
     override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(
             UField::class.java,
             UMethod::class.java,
@@ -31,7 +31,7 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
         if (!isJava(uastFile?.sourcePsi)) {
             return null
         }
-        object: UElementHandler() {
+        object : UElementHandler() {
             override fun visitField(node: UField) {
                 if (node.requiresNullAnnotation && !node.isNullAnnotated) {
                     report(node, MISSING_FIELD_ANNOTATION)
@@ -56,6 +56,7 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
             }
         }
     }
+
     companion object {
         val MISSING_FIELD_ANNOTATION = Issue.create(
                 id = "MissingNullAnnotationOnField",
@@ -88,32 +89,37 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
 /* UVariable Extensions */
 private val UVariable.isPrimitive get() = this.type is PsiPrimitiveType
 private val UVariable.isEnum get() = this is UEnumConstant
-private val UVariable.isInjected get() = this.annotations.any { annotation ->
-    annotation.qualifiedName?.endsWith("Inject") ?: false
-}
+private val UVariable.isInjected
+    get() = this.annotations.any { annotation ->
+        annotation.qualifiedName?.endsWith("Inject") ?: false
+    }
 private val UVariable.isConstant get() = this.isStatic && this.isFinal
-private val UVariable.isInitializedFinalField get() = this.isFinal
-        && this.uastInitializer != null
-private val UVariable.requiresNullAnnotation get() =
-    !this.isPrimitive
-            && !this.isEnum
-            && !this.isConstant
-            && !this.isInitializedFinalField
-            && !this.isInjected
+private val UVariable.isInitializedFinalField
+    get() = this.isFinal
+            && this.uastInitializer != null
+private val UVariable.requiresNullAnnotation
+    get() =
+        !this.isPrimitive
+                && !this.isEnum
+                && !this.isConstant
+                && !this.isInitializedFinalField
+                && !this.isInjected
 
 /* UMethod Extensions */
 private val UMethod.isPrimitive get() = this.returnType is PsiPrimitiveType
-private val UMethod.requiresNullAnnotation get() =
-    this !is UAnnotationMethod
-            && !this.isPrimitive
-            && !this.isConstructor
+private val UMethod.requiresNullAnnotation
+    get() =
+        this !is UAnnotationMethod
+                && !this.isPrimitive
+                && !this.isConstructor
 
 /* UAnnotated Extensions */
-private val UAnnotated.isNullAnnotated get() = this.uAnnotations.any { annotation ->
-    MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
-        annotation.qualifiedName == nullAnnotation
+private val UAnnotated.isNullAnnotated
+    get() = this.uAnnotations.any { annotation ->
+        MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
+            annotation.qualifiedName == nullAnnotation
+        }
     }
-}
 
 /* Issue.Companion Extensions */
 private fun Issue.Companion.create(
@@ -143,30 +149,31 @@ private fun JavaContext.report(node: UElement, issue: Issue) = report(
 )
 
 /* UElement Extensions */
-private val UElement.fixes get() = this.asSourceString().let { sourceString ->
-    val nullableReplacement = "@Nullable $sourceString"
-    val nonNullReplacement = "@NonNull $sourceString"
+private val UElement.fixes
+    get() = this.asSourceString().let { sourceString ->
+        val nullableReplacement = "@Nullable $sourceString"
+        val nonNullReplacement = "@NonNull $sourceString"
 
-    LintFix.create().group()
-            .add(
-                    LintFix.create()
-                            .name("Annotate as @Nullable")
-                            .replace()
-                            .text(sourceString)
-                            .shortenNames()
-                            .reformat(true)
-                            .with(nullableReplacement)
-                            .build()
-            )
-            .add(
-                    LintFix.create()
-                            .name("Annotate as @NonNull")
-                            .replace()
-                            .text(sourceString)
-                            .shortenNames()
-                            .reformat(true)
-                            .with(nonNullReplacement)
-                            .build()
-            )
-            .build()
-}
+        LintFix.create().group()
+                .add(
+                        LintFix.create()
+                                .name("Annotate as @Nullable")
+                                .replace()
+                                .text(sourceString)
+                                .shortenNames()
+                                .reformat(true)
+                                .with(nullableReplacement)
+                                .build()
+                )
+                .add(
+                        LintFix.create()
+                                .name("Annotate as @NonNull")
+                                .replace()
+                                .text(sourceString)
+                                .shortenNames()
+                                .reformat(true)
+                                .with(nonNullReplacement)
+                                .build()
+                )
+                .build()
+    }
