@@ -91,14 +91,33 @@ class MissingNullAnnotationDetectorTest {
                 )
     }
     @Test
-    fun `it ignores injected parameters`() {
+    fun `it should inform when null annotation is missing on a construction parameter`() {
         lint().files(LintDetectorTest.java("""
             package test;
 
             class ExampleClass {
-              String getMessage(@Inject String name) {
-                return name + " example";
-              }
+              ExampleClass(String name) {}
+            }
+        """).indented())
+                .allowCompilationErrors()
+                .issues(MissingNullAnnotationDetector.MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
+                .run()
+                .expect("""
+                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnConstructorParameter]
+                      ExampleClass(String name) {}
+                                   ~~~~~~~~~~~
+                    0 errors, 0 warnings
+                            """
+                        .trimIndent()
+                )
+    }
+    @Test
+    fun `it ignores injected constructors`() {
+        lint().files(LintDetectorTest.java("""
+            package test;
+
+            class ExampleClass {
+              @Inject ExampleClass(String name) {}
             }
         """).indented())
                 .allowCompilationErrors()
