@@ -18,6 +18,7 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UEnumConstant
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UVariable
 
 class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
@@ -38,14 +39,19 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
             }
 
             override fun visitMethod(node: UMethod) {
+                node.uastParameters.forEach { visitParameter(node, it) }
+
                 if (node.requiresNullAnnotation && !node.isNullAnnotated) {
                     report(node, MISSING_METHOD_RETURN_TYPE_ANNOTATION)
                 }
+            }
 
-                node.uastParameters.forEach { parameter ->
-                    if (parameter.requiresNullAnnotation && !parameter.isNullAnnotated) {
+            private fun visitParameter(node: UMethod, parameter: UParameter) {
+                if (parameter.requiresNullAnnotation && !parameter.isNullAnnotated) {
+                    if (node.isConstructor)
+                        report(parameter, MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
+                    else
                         report(parameter, MISSING_METHOD_PARAMETER_ANNOTATION)
-                    }
                 }
             }
         }
@@ -56,15 +62,20 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
                 briefDescription = "Nullable/NonNull annotation missing on field",
                 explanation = "Checks for missing `@NonNull/@Nullable` annotations for fields.",
         )
-        val MISSING_METHOD_RETURN_TYPE_ANNOTATION = Issue.create(
-                id = "MissingNullAnnotationOnMethodReturnType",
-                briefDescription = "Nullable/NonNull annotation missing on method return type",
-                explanation = "Checks for missing `@NonNull/@Nullable` annotations on method return types.",
+        val MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION = Issue.create(
+                id = "MissingNullAnnotationOnConstructorParameter",
+                briefDescription = "Nullable/NonNull annotation missing on constructor parameter",
+                explanation = "Checks for missing `@NonNull/@Nullable` annotations on constructor parameters.",
         )
         val MISSING_METHOD_PARAMETER_ANNOTATION = Issue.create(
                 id = "MissingNullAnnotationOnMethodParameter",
                 briefDescription = "Nullable/NonNull annotation missing on method parameter",
                 explanation = "Checks for missing `@NonNull/@Nullable` annotations on method parameters.",
+        )
+        val MISSING_METHOD_RETURN_TYPE_ANNOTATION = Issue.create(
+                id = "MissingNullAnnotationOnMethodReturnType",
+                briefDescription = "Nullable/NonNull annotation missing on method return type",
+                explanation = "Checks for missing `@NonNull/@Nullable` annotations on method return types.",
         )
 
         @Suppress("ForbiddenComment")
