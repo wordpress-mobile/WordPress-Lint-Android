@@ -1,10 +1,10 @@
 version = "2.0.0"
 
 apply plugin: 'java-library'
-apply plugin: 'kotlin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'com.android.lint'
 
-lintOptions {
+lint {
     htmlReport true
     htmlOutput file("lint-report.html")
     textReport true
@@ -14,52 +14,22 @@ lintOptions {
 
 dependencies {
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
-    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     testImplementation "junit:junit:4.13.2"
-    testImplementation "com.android.tools.lint:lint:$lintVersion"
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
-    testImplementation "com.android.tools:testutils:$lintVersion"
 }
 
-sourceCompatibility = "17"
-targetCompatibility = "17"
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = 'lint'
-//            userOrg = 'wordpress-mobile'
-            groupId = 'org.wordpress'
-//            uploadName = 'lint'
-//            desc = 'Lint module for WordPress-Android'
-//            publishVersion = project.version
-            version = project.version
-//            licences = ['GPL-2.0']
-//            website = 'https://github.com/wordpress-mobile/WordPress-Lint-Android'
-//            dryRun = 'false'
-//            autoPublish = 'true'
-
             from components.java
+
+            artifactId = 'lint'
+            groupId = 'org.wordpress'
+            version = project.version
         }
     }
 }
-//jar {
-//    manifest {
-//        attributes("Lint-Registry-v2": "org.wordpress.android.lint.WordPressIssueRegistry")
-//    }
-//}
-
-//publish {
-//    artifactId = 'lint'
-//    userOrg = 'wordpress-mobile'
-//    groupId = 'org.wordpress'
-//    uploadName = 'lint'
-//    desc = 'Lint module for WordPress-Android'
-//    publishVersion = project.version
-//    licences = ['GPL-2.0']
-//    website = 'https://github.com/wordpress-mobile/WordPress-Lint-Android'
-//    dryRun = 'false'
-//    autoPublish = 'true'
-//}
