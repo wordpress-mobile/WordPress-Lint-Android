@@ -52,7 +52,6 @@ class WordPressAndroidApiInViewModelDetectorTest {
 
             class ViewModel
         """).indented())
-                .allowCompilationErrors()
                 .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectClean()
