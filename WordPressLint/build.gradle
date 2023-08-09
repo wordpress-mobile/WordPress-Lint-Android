@@ -27,8 +27,8 @@ publishing {
         maven(MavenPublication) {
             from components.java
 
-            artifactId = 'lint'
             groupId = 'org.wordpress'
+            artifactId = 'lint'
             version = project.version
         }
     }
