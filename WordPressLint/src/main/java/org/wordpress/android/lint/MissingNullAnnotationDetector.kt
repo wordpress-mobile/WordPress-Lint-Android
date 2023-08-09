@@ -78,10 +78,6 @@ class MissingNullAnnotationDetector: Detector(), SourceCodeScanner {
                 explanation = "Checks for missing `@NonNull/@Nullable` annotations on method return types.",
         )
 
-        @Suppress("ForbiddenComment")
-        // TODO: Create a LintFix to normalize our usage to Android's annotations. This can be
-        // useful for running Nullability analysis. See:
-        // https://developer.android.com/studio/write/annotations#nullability-analysis
         val acceptableNullAnnotations = listOf(
                 "androidx.annotation.NonNull",
                 "androidx.annotation.Nullable",
