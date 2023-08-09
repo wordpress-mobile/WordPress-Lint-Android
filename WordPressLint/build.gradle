@@ -4,7 +4,7 @@ apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'com.android.lint'
 
-lintOptions {
+lint {
     htmlReport true
     htmlOutput file("lint-report.html")
     textReport true
