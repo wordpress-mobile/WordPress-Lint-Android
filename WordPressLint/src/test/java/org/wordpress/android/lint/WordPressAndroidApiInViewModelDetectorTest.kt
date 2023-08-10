@@ -18,6 +18,7 @@ class WordPressAndroidApiInViewModelDetectorTest {
               lateinit var textView: TextView
              }
         """).indented())
+                .allowCompilationErrors()
                 .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expect("src/test/TestViewModel.kt:2: Error: ViewModels shouldn't " +
@@ -38,6 +39,7 @@ class WordPressAndroidApiInViewModelDetectorTest {
 
             class TestViewModel : ViewModel()
         """).indented())
+                .allowCompilationErrors()
                 .issues(ISSUE_ANDROID_IMPORT_IN_VIEWMODEL)
                 .run()
                 .expectClean()

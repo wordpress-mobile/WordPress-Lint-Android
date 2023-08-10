@@ -1,0 +1,29 @@
+buildscript {
+    ext {
+        kotlinVersion = '1.8.21'
+        agpVersion = '8.1.0'
+        lintVersion = '31.1.0'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$agpVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+
+}
+
+plugins {
+    id 'maven-publish'
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
