@@ -14,12 +14,14 @@ import com.android.tools.lint.detector.api.isJava
 import com.intellij.psi.PsiPrimitiveType
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UAnnotationMethod
+import org.jetbrains.uast.UAnonymousClass
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UEnumConstant
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UVariable
+import org.jetbrains.uast.getContainingUClass
 
 class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
     override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(
@@ -39,6 +41,10 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
             }
 
             override fun visitMethod(node: UMethod) {
+                // Ignore anonymous constructor implementations
+                if (node.isAnonymousConstructor) {
+                    return
+                }
                 node.uastParameters.forEach { visitParameter(node, it) }
 
                 if (node.requiresNullAnnotation && !node.isNullAnnotated) {
@@ -108,6 +114,8 @@ private val UMethod.isPrimitive
     get() = returnType is PsiPrimitiveType
 private val UMethod.requiresNullAnnotation
     get() = this !is UAnnotationMethod && !isPrimitive && !isConstructor
+private val UMethod.isAnonymousConstructor
+    get() = isConstructor && getContainingUClass()?.let { it is UAnonymousClass } == true
 
 /* UAnnotated Extensions */
 private val UAnnotated.isNullAnnotated
