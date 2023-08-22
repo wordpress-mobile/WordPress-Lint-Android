@@ -48,10 +48,11 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
 
             private fun visitParameter(node: UMethod, parameter: UParameter) {
                 if (parameter.requiresNullAnnotation && !parameter.isNullAnnotated) {
-                    if (node.isConstructor)
+                    if (node.isConstructor) {
                         report(parameter, MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
-                    else
+                    } else {
                         report(parameter, MISSING_METHOD_PARAMETER_ANNOTATION)
+                    }
                 }
             }
         }
