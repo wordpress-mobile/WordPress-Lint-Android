@@ -29,7 +29,7 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
 
     override fun createUastHandler(context: JavaContext): UElementHandler? = with(context) {
         if (!isJava(uastFile?.sourcePsi)) {
-            return null
+            return UElementHandler.NONE
         }
         object : UElementHandler() {
             override fun visitField(node: UField) {
