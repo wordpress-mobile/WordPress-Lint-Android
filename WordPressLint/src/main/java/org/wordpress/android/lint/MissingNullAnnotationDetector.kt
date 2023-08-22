@@ -88,35 +88,30 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
 }
 
 /* UVariable Extensions */
-private val UVariable.isPrimitive get() = this.type is PsiPrimitiveType
-private val UVariable.isEnum get() = this is UEnumConstant
+private val UVariable.isPrimitive
+    get() = type is PsiPrimitiveType
+private val UVariable.isEnum
+    get() = this is UEnumConstant
 private val UVariable.isInjected
-    get() = this.annotations.any { annotation ->
+    get() = annotations.any { annotation ->
         annotation.qualifiedName?.endsWith("Inject") ?: false
     }
-private val UVariable.isConstant get() = this.isStatic && this.isFinal
+private val UVariable.isConstant
+    get() = isStatic && isFinal
 private val UVariable.isInitializedFinalField
-    get() = this.isFinal
-            && this.uastInitializer != null
+    get() = isFinal && uastInitializer != null
 private val UVariable.requiresNullAnnotation
-    get() =
-        !this.isPrimitive
-                && !this.isEnum
-                && !this.isConstant
-                && !this.isInitializedFinalField
-                && !this.isInjected
+    get() = !(isPrimitive || isEnum || isConstant || isInitializedFinalField || isInjected)
 
 /* UMethod Extensions */
-private val UMethod.isPrimitive get() = this.returnType is PsiPrimitiveType
+private val UMethod.isPrimitive
+    get() = returnType is PsiPrimitiveType
 private val UMethod.requiresNullAnnotation
-    get() =
-        this !is UAnnotationMethod
-                && !this.isPrimitive
-                && !this.isConstructor
+    get() = this !is UAnnotationMethod && !isPrimitive && !isConstructor
 
 /* UAnnotated Extensions */
 private val UAnnotated.isNullAnnotated
-    get() = this.uAnnotations.any { annotation ->
+    get() = uAnnotations.any { annotation ->
         MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
             annotation.qualifiedName == nullAnnotation
         }
@@ -151,7 +146,7 @@ private fun JavaContext.report(node: UElement, issue: Issue) = report(
 
 /* UElement Extensions */
 private val UElement.fixes
-    get() = this.asSourceString().let { sourceString ->
+    get() = asSourceString().let { sourceString ->
         val nullableReplacement = "@Nullable $sourceString"
         val nonNullReplacement = "@NonNull $sourceString"
 
