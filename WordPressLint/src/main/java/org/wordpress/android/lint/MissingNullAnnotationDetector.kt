@@ -29,7 +29,7 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
             UMethod::class.java,
     )
 
-    override fun createUastHandler(context: JavaContext): UElementHandler? = with(context) {
+    override fun createUastHandler(context: JavaContext) = with(context) {
         if (!isJava(uastFile?.sourcePsi)) {
             return UElementHandler.NONE
         }
