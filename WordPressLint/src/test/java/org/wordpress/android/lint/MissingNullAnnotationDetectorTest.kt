@@ -267,7 +267,7 @@ class MissingNullAnnotationDetectorTest {
               @Inject ExampleClass(String name) {}
             }
         """).indented())
-                .issues(MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION)
+                .issues(MissingNullAnnotationDetector.MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
                 .run()
                 .expectClean()
     }
