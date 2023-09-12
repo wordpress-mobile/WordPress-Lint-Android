@@ -11,6 +11,7 @@ import com.android.tools.lint.detector.api.Scope.Companion.JAVA_FILE_SCOPE
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isJava
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiPrimitiveType
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UAnnotationMethod
@@ -45,7 +46,10 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
                 if (node.isAnonymousConstructor) {
                     return
                 }
-                node.uastParameters.forEach { visitParameter(node, it) }
+
+                if (!node.isInjected) {
+                    node.uastParameters.forEach { visitParameter(node, it) }
+                }
 
                 if (node.requiresNullAnnotation && !node.isNullAnnotated) {
                     report(node, MISSING_METHOD_RETURN_TYPE_ANNOTATION)
@@ -99,9 +103,7 @@ private val UVariable.isPrimitive
 private val UVariable.isEnum
     get() = this is UEnumConstant
 private val UVariable.isInjected
-    get() = annotations.any { annotation ->
-        annotation.qualifiedName?.endsWith("Inject") ?: false
-    }
+    get() = annotations.hasInject
 private val UVariable.isConstant
     get() = isStatic && isFinal
 private val UVariable.isInitializedFinalField
@@ -116,6 +118,8 @@ private val UMethod.requiresNullAnnotation
     get() = this !is UAnnotationMethod && !isPrimitive && !isConstructor
 private val UMethod.isAnonymousConstructor
     get() = isConstructor && getContainingUClass()?.let { it is UAnonymousClass } == true
+private val UMethod.isInjected
+    get() = annotations.hasInject
 
 /* UAnnotated Extensions */
 private val UAnnotated.isNullAnnotated
@@ -180,4 +184,10 @@ private val UElement.fixes
                                 .build()
                 )
                 .build()
+    }
+
+/* Misc Extensions */
+private val Array<PsiAnnotation>.hasInject
+    get() = any { annotation ->
+        annotation.qualifiedName?.endsWith("Inject") ?: false
     }
