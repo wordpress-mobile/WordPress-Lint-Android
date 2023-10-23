@@ -1,8 +1,10 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'com.android.lint'
+    id 'maven-publish'
+}
 version = "2.0.0"
-
-apply plugin: 'java-library'
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'com.android.lint'
 
 lint {
     htmlReport true
@@ -10,6 +12,11 @@ lint {
     textReport true
     absolutePaths false
     ignoreTestSources true
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {
