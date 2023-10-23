@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'com.android.lint'
     id 'maven-publish'
+    id "com.automattic.android.publish-to-s3"
 }
 
 lint {
