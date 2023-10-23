@@ -4,7 +4,6 @@ plugins {
     id 'com.android.lint'
     id 'maven-publish'
 }
-version = "2.0.0"
 
 lint {
     htmlReport true
@@ -36,7 +35,7 @@ publishing {
 
             groupId = 'org.wordpress'
             artifactId = 'lint'
-            version = project.version
+            // version is set by 'publish-to-s3' plugin
         }
     }
 }
