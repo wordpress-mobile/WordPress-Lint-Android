@@ -3,5 +3,5 @@ plugins {
 }
 
 ext {
-    lintVersion = '31.1.0'
+    lintVersion = '31.1.2'
 }
