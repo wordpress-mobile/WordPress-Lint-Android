@@ -1,3 +1,5 @@
+@file:Suppress("RedundantVisibilityModifier")
+
 package org.wordpress.android.lint
 
 import com.android.tools.lint.checks.infrastructure.TestFile
