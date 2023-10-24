@@ -10,21 +10,13 @@ dependencies {
 }
 ```
 
-## Publish an updated version to your local maven repository
+## Publishing a new version
 
-You can bump the [version name in the main build file: `WordPressLint/build.gradle`][1]. After updating the build file, you can build, and publish the library to your local maven repo. That will let you try the new version in your app for example.
+In the following cases, the CI will publish a new version with the following format to our remote Maven repo:
 
-```shell
-$ ./gradlew assemble test publishToMavenLocal
-```
-
-## Publish it to Bintray
-
-When a new version is ready to be published to the remote repository, use the following command to upload it to Bintray:
-
-```shell
-$ ./gradlew assemble test bintrayUpload -PbintrayUser=FIXME -PbintrayKey=FIXME -PdryRun=false
-```
+* For each commit in an open PR: `<PR-number>-<commit full SHA1>`
+* Each time a PR is merged to `trunk`: `trunk-<commit full SHA1>`
+* Each time a new tag is created: `{tag-name}`
 
 ## License ##
 
