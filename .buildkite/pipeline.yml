@@ -30,6 +30,9 @@ steps:
       ./gradlew test
 
   - label: "Publish to S3"
+    depends_on:
+      - "lint"
+      - "test"
     plugins: *common_plugins
     command: |
       ./gradlew \
