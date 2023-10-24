@@ -15,6 +15,14 @@ steps:
   # Wait for Gradle Wrapper to be validated before running any other jobs
   - wait
 
+  - label: "Lint"
+    key: "lint"
+    plugins: *common_plugins
+    command: |
+      ./gradlew lint
+    artifact_paths:
+      - "**/build/reports/lint-results.*"
+
   - label: "Publish to S3"
     plugins: *common_plugins
     command: |
