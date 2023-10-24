@@ -23,6 +23,12 @@ steps:
     artifact_paths:
       - "**/build/reports/lint-results.*"
 
+  - label: "Test"
+    key: "test"
+    plugins: *common_plugins
+    command: |
+      ./gradlew test
+
   - label: "Publish to S3"
     plugins: *common_plugins
     command: |
