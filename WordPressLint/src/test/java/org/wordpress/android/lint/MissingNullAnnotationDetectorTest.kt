@@ -271,4 +271,24 @@ class MissingNullAnnotationDetectorTest {
                 .run()
                 .expectClean()
     }
+    @Test
+    fun `it ignores enums`() {
+        lint().files(LintDetectorTest.java("""
+            package test;
+            
+            public enum TrafficLightState {
+                RED,
+                YELLOW,
+                GREEN
+            }
+        """).indented())
+                .issues(
+                        MissingNullAnnotationDetector.MISSING_FIELD_ANNOTATION,
+                        MissingNullAnnotationDetector.MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION,
+                        MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION,
+                        MissingNullAnnotationDetector.MISSING_METHOD_RETURN_TYPE_ANNOTATION
+                )
+                .run()
+                .expectClean()
+    }
 }
