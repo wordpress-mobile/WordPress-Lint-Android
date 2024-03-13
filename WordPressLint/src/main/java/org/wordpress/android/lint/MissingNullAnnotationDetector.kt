@@ -12,17 +12,18 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.isJava
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiPrimitiveType
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UAnnotationMethod
 import org.jetbrains.uast.UAnonymousClass
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UEnumConstant
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UVariable
 import org.jetbrains.uast.getContainingUClass
+import org.jetbrains.uast.getContainingUMethod
 
 class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
     override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(
@@ -101,7 +102,7 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
 private val UVariable.isPrimitive
     get() = type is PsiPrimitiveType
 private val UVariable.isEnum
-    get() = this is UEnumConstant
+    get() = this is PsiEnumConstant
 private val UVariable.isInjected
     get() = annotations.hasInject
 private val UVariable.isConstant
@@ -111,15 +112,23 @@ private val UVariable.isInitializedFinalField
 private val UVariable.requiresNullAnnotation
     get() = !(isPrimitive || isEnum || isConstant || isInitializedFinalField || isInjected)
 
+/* UParameter Extensions */
+private val UParameter.requiresNullAnnotation
+    get() = this.getContainingUMethod()?.uastBody != null
+            && (this as UVariable).requiresNullAnnotation
+
 /* UMethod Extensions */
 private val UMethod.isPrimitive
     get() = returnType is PsiPrimitiveType
 private val UMethod.requiresNullAnnotation
-    get() = this !is UAnnotationMethod && !isPrimitive && !isConstructor
+    get() = this !is UAnnotationMethod && uastBody != null && !isPrimitive && !isConstructor
+            && !isEnum
 private val UMethod.isAnonymousConstructor
     get() = isConstructor && getContainingUClass()?.let { it is UAnonymousClass } == true
 private val UMethod.isInjected
     get() = annotations.hasInject
+private val UMethod.isEnum
+    get() = returnType is PsiEnumConstant
 
 /* UAnnotated Extensions */
 private val UAnnotated.isNullAnnotated
