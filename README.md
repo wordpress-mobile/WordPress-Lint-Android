@@ -6,7 +6,7 @@ Pluggable lint module for WordPress-Android.
 * In your build.gradle:
 ```groovy
 dependencies {
-    lintChecks 'org.wordpress:lint:2.0.0' // use version 2.0.0
+    lintChecks 'org.wordpress:lint:2.1.0' // use version 2.1.0
 }
 ```
 
