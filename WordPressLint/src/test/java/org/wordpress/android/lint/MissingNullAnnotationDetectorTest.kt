@@ -2,6 +2,7 @@ package org.wordpress.android.lint
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import com.android.tools.lint.detector.api.Severity
 import org.junit.Test
 import org.wordpress.android.lint.Utils.nonNullClass
 import org.wordpress.android.lint.Utils.nullableClass
@@ -148,13 +149,14 @@ class MissingNullAnnotationDetectorTest {
             package test;
 
             class ExampleClass {
-              String getMessage(String name) {
+              String getMessage(String name, String title) {
                 return name + " example";
               }
             }
         """).indented())
                 .issues(MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION)
                 .run()
+                .expectCount(1, Severity.INFORMATIONAL)
                 .expect("""
                     src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodParameter]
                       String getMessage(String name) {
@@ -210,11 +212,12 @@ class MissingNullAnnotationDetectorTest {
             package test;
 
             class ExampleClass {
-              ExampleClass(String name) {}
+              ExampleClass(String name, String title) {}
             }
         """).indented())
                 .issues(MissingNullAnnotationDetector.MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
                 .run()
+                .expectCount(1, Severity.INFORMATIONAL)
                 .expect("""
                     src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnConstructorParameter]
                       ExampleClass(String name) {}
