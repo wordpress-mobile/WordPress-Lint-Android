@@ -49,21 +49,17 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
                 }
 
                 if (!node.isInjected) {
-                    node.uastParameters.forEach { visitParameter(node, it) }
+                    if (node.uastParameters.any { it.requiresNullAnnotation && !it.isNullAnnotated }) {
+                        if (node.isConstructor) {
+                            report(node, MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
+                        } else {
+                            report(node, MISSING_METHOD_PARAMETER_ANNOTATION)
+                        }
+                    }
                 }
 
                 if (node.requiresNullAnnotation && !node.isNullAnnotated) {
                     report(node, MISSING_METHOD_RETURN_TYPE_ANNOTATION)
-                }
-            }
-
-            private fun visitParameter(node: UMethod, parameter: UParameter) {
-                if (parameter.requiresNullAnnotation && !parameter.isNullAnnotated) {
-                    if (node.isConstructor) {
-                        report(parameter, MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
-                    } else {
-                        report(parameter, MISSING_METHOD_PARAMETER_ANNOTATION)
-                    }
                 }
             }
         }

@@ -159,8 +159,8 @@ class MissingNullAnnotationDetectorTest {
                 .expectCount(1, Severity.INFORMATIONAL)
                 .expect("""
                     src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodParameter]
-                      String getMessage(String name) {
-                                        ~~~~~~~~~~~
+                      String getMessage(String name, String title) {
+                             ~~~~~~~~~~
                     0 errors, 0 warnings
                             """
                         .trimIndent()
@@ -220,8 +220,8 @@ class MissingNullAnnotationDetectorTest {
                 .expectCount(1, Severity.INFORMATIONAL)
                 .expect("""
                     src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnConstructorParameter]
-                      ExampleClass(String name) {}
-                                   ~~~~~~~~~~~
+                      ExampleClass(String name, String title) {}
+                      ~~~~~~~~~~~~
                     0 errors, 0 warnings
                             """
                         .trimIndent()
