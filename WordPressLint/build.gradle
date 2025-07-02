@@ -22,7 +22,8 @@ repositories {
 dependencies {
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
     implementation "com.slack.lint:slack-lint-checks:0.9.0"
-
+    // For bundling into your library's lint.jar
+    lintChecks "com.slack.lint:slack-lint-checks:0.9.0"
     testImplementation "junit:junit:4.13.2"
     testImplementation "com.android.tools.lint:lint-api:$lintVersion"
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
