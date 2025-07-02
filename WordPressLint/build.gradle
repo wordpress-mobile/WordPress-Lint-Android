@@ -24,11 +24,16 @@ dependencies {
     implementation "com.slack.lint:slack-lint-checks:0.9.0"
 
     testImplementation "junit:junit:4.13.2"
+    testImplementation "com.android.tools.lint:lint-api:$lintVersion"
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "17"
+}
 
 publishing {
     publications {
