@@ -21,10 +21,20 @@ repositories {
 
 dependencies {
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
-    compileOnly "com.slack.lint:slack-lint-checks:0.9.0"
+    implementation "com.slack.lint:slack-lint-checks:0.10.0"
     testImplementation "junit:junit:4.13.2"
     testImplementation "com.android.tools.lint:lint-api:$lintVersion"
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
+}
+
+jar {
+    from {
+        // Build fat jar with all dependencies
+        configurations.runtimeClasspath.collect { it.isDirectory()? it : zipTree(it) }
+    } {
+        exclude 'META-INF/services/com.android.tools.lint.client.api.IssueRegistry'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
