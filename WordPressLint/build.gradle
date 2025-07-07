@@ -34,12 +34,13 @@ shadowJar {
     mergeServiceFiles()
 }
 
+jar.enabled = false
 shadowJar.finalizedBy('cleanServiceFile')
 
 tasks.register('cleanServiceFile') {
     doLast {
         def jarFile = file(shadowJar.archiveFile.get())
-        def unzipDir = file("${project.layout.buildDir}/tmp/cleanedJar")
+        def unzipDir = layout.buildDirectory.dir("tmp/cleanedJar").get().asFile
 
         copy {
             from zipTree(jarFile)
