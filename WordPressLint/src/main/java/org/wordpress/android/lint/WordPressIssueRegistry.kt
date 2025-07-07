@@ -24,7 +24,11 @@ class WordPressIssueRegistry : IssueRegistry() {
             )
 
             val allSlackIssues = slackIssueRegistry.issues
-            return allOwnIssues + allSlackIssues
+            val selectedSlackIssues = allSlackIssues.filter { issue ->
+                issue.id == DataClassMockDetector.issue.id || issue.id == SealedClassMockDetector.issue.id
+            }
+
+            return allOwnIssues + selectedSlackIssues
         }
 
     override val vendor = Vendor(
