@@ -1,9 +1,12 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
+
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm'
     id 'com.android.lint'
     id 'maven-publish'
     id "com.automattic.android.publish-to-s3"
+    id "com.gradleup.shadow" version '8.3.8'
 }
 
 lint {
@@ -27,14 +30,31 @@ dependencies {
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
 }
 
-jar {
-    from {
-        // Build fat jar with all dependencies
-        configurations.runtimeClasspath.collect { it.isDirectory()? it : zipTree(it) }
-    } {
-        exclude 'META-INF/services/com.android.tools.lint.client.api.IssueRegistry'
+shadowJar {
+    mergeServiceFiles()
+}
+
+shadowJar.finalizedBy('cleanServiceFile')
+
+tasks.register('cleanServiceFile') {
+    doLast {
+        def jarFile = file(shadowJar.archiveFile.get())
+        def unzipDir = file("$project.layout.buildDir/tmp/cleanedJar")
+
+        copy {
+            from zipTree(jarFile)
+            into unzipDir
+        }
+
+        def serviceFile = file("$unzipDir/META-INF/services/com.android.tools.lint.client.api.IssueRegistry")
+        if (serviceFile.exists()) {
+            serviceFile.text = serviceFile.readLines()
+                    .findAll { !it.contains("slack.lint.SlackIssueRegistry") }
+                    .join('\n')
+        }
+
+        ant.zip(destfile: jarFile, basedir: unzipDir)
     }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
