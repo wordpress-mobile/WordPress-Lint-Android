@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
-    implementation "com.slack.lint:slack-lint-checks:0.9.0"
+    compileOnly "com.slack.lint:slack-lint-checks:0.9.0"
     testImplementation "junit:junit:4.13.2"
     testImplementation "com.android.tools.lint:lint-api:$lintVersion"
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
@@ -39,7 +39,7 @@ shadowJar.finalizedBy('cleanServiceFile')
 tasks.register('cleanServiceFile') {
     doLast {
         def jarFile = file(shadowJar.archiveFile.get())
-        def unzipDir = file("$project.layout.buildDir/tmp/cleanedJar")
+        def unzipDir = file("${project.layout.buildDir}/tmp/cleanedJar")
 
         copy {
             from zipTree(jarFile)
