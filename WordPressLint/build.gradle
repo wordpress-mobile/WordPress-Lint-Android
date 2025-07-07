@@ -1,12 +1,9 @@
-import com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer
-
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm'
     id 'com.android.lint'
     id 'maven-publish'
     id "com.automattic.android.publish-to-s3"
-    id "com.gradleup.shadow" version '8.3.8'
 }
 
 lint {
@@ -30,15 +27,11 @@ dependencies {
     testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
 }
 
-shadowJar {
-    mergeServiceFiles()
-}
-
-shadowJar.finalizedBy('cleanServiceFile')
+jar.finalizedBy('cleanServiceFile')
 
 tasks.register('cleanServiceFile') {
     doLast {
-        def jarFile = file(shadowJar.archiveFile.get())
+        def jarFile = file(jar.archiveFile.get())
         def unzipDir = file("$project.layout.buildDir/tmp/cleanedJar")
 
         copy {
