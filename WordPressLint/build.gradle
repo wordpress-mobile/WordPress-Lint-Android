@@ -34,7 +34,6 @@ shadowJar {
     mergeServiceFiles()
 }
 
-jar.enabled = false
 shadowJar.finalizedBy('cleanServiceFile')
 
 tasks.register('cleanServiceFile') {
@@ -68,7 +67,7 @@ compileKotlin {
 publishing {
     publications {
         maven(MavenPublication) {
-            from components.java
+            from(components["shadow"])
 
             groupId = 'org.wordpress'
             artifactId = 'lint'
