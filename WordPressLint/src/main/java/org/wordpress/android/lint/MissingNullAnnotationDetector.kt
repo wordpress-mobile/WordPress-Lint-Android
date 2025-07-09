@@ -32,7 +32,8 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
     )
 
     override fun createUastHandler(context: JavaContext) = with(context) {
-        if (!isJava(uastFile?.sourcePsi)) {
+        val sourcePsi= uastFile?.sourcePsi
+        if (!(sourcePsi != null && isJava(sourcePsi.language))) {
             return UElementHandler.NONE
         }
         object : UElementHandler() {
