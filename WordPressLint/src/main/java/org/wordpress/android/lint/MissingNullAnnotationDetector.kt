@@ -32,7 +32,8 @@ class MissingNullAnnotationDetector : Detector(), SourceCodeScanner {
     )
 
     override fun createUastHandler(context: JavaContext) = with(context) {
-        if (!isJava(uastFile?.sourcePsi)) {
+        val sourcePsi= uastFile?.sourcePsi
+        if (!(sourcePsi != null && isJava(sourcePsi.language))) {
             return UElementHandler.NONE
         }
         object : UElementHandler() {
@@ -131,11 +132,26 @@ private val UMethod.isEnum
     get() = returnType is PsiEnumConstant
 
 /* UAnnotated Extensions */
-private val UAnnotated.isNullAnnotated
-    get() = uAnnotations.any { annotation ->
-        MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
-            annotation.qualifiedName == nullAnnotation
+private val UAnnotated.isNullAnnotated: Boolean
+    get() {
+        // Check UAST annotations first, as this is the primary source
+        val uastHasAnnotation = uAnnotations.any { annotation ->
+            MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
+                annotation.qualifiedName == nullAnnotation
+            }
         }
+
+        // If it's a UMethod and UAST didn't find it, check PSI annotations
+        if (this is UMethod && !uastHasAnnotation) {
+            return (sourcePsi as? com.intellij.psi.PsiMethod)?.annotations?.any { annotation ->
+                MissingNullAnnotationDetector.acceptableNullAnnotations.any { nullAnnotation ->
+                    annotation.qualifiedName == nullAnnotation
+                }
+            } ?: false
+        }
+
+        // Otherwise, return the result from the UAST check
+        return uastHasAnnotation
     }
 
 /* Issue.Companion Extensions */

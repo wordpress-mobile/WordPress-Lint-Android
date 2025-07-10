@@ -20,10 +20,10 @@ class MissingNullAnnotationDetectorTest {
                 .issues(MissingNullAnnotationDetector.MISSING_FIELD_ANNOTATION)
                 .run()
                 .expect("""
-                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnField]
+                    src/test/ExampleClass.java:4: Hint: Missing null annotation [MissingNullAnnotationOnField]
                       String mExampleField = "example";
                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    0 errors, 0 warnings
+                    0 errors, 0 warnings, 1 hint
                             """
                         .trimIndent()
                 )
@@ -93,10 +93,10 @@ class MissingNullAnnotationDetectorTest {
                 .issues(MissingNullAnnotationDetector.MISSING_METHOD_RETURN_TYPE_ANNOTATION)
                 .run()
                 .expect("""
-                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodReturnType]
+                    src/test/ExampleClass.java:4: Hint: Missing null annotation [MissingNullAnnotationOnMethodReturnType]
                       String getMessage() {
                              ~~~~~~~~~~
-                    0 errors, 0 warnings
+                    0 errors, 0 warnings, 1 hint
                             """
                         .trimIndent()
                 )
@@ -156,10 +156,10 @@ class MissingNullAnnotationDetectorTest {
                 .issues(MissingNullAnnotationDetector.MISSING_METHOD_PARAMETER_ANNOTATION)
                 .run()
                 .expect("""
-                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnMethodParameter]
+                    src/test/ExampleClass.java:4: Hint: Missing null annotation [MissingNullAnnotationOnMethodParameter]
                       String getMessage(String name) {
                                         ~~~~~~~~~~~
-                    0 errors, 0 warnings
+                    0 errors, 0 warnings, 1 hint
                             """
                         .trimIndent()
                 )
@@ -216,10 +216,10 @@ class MissingNullAnnotationDetectorTest {
                 .issues(MissingNullAnnotationDetector.MISSING_CONSTRUCTOR_PARAMETER_ANNOTATION)
                 .run()
                 .expect("""
-                    src/test/ExampleClass.java:4: Information: Missing null annotation [MissingNullAnnotationOnConstructorParameter]
+                    src/test/ExampleClass.java:4: Hint: Missing null annotation [MissingNullAnnotationOnConstructorParameter]
                       ExampleClass(String name) {}
                                    ~~~~~~~~~~~
-                    0 errors, 0 warnings
+                    0 errors, 0 warnings, 1 hint
                             """
                         .trimIndent()
                 )
