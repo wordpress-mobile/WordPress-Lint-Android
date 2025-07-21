@@ -6,6 +6,7 @@ import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
 import slack.lint.SlackIssueRegistry
 import slack.lint.mocking.DataClassMockDetector
+import slack.lint.mocking.RecordClassMockDetector
 import slack.lint.mocking.SealedClassMockDetector
 
 class WordPressIssueRegistry : IssueRegistry() {
@@ -25,7 +26,9 @@ class WordPressIssueRegistry : IssueRegistry() {
 
             val allSlackIssues = slackIssueRegistry.issues
             val selectedSlackIssues = allSlackIssues.filter { issue ->
-                issue.id == DataClassMockDetector.issue.id || issue.id == SealedClassMockDetector.issue.id
+                issue.id == DataClassMockDetector.issue.id ||
+                        issue.id == SealedClassMockDetector.issue.id ||
+                        issue.id == RecordClassMockDetector.issue.id
             }
 
             return allOwnIssues + selectedSlackIssues
